@@ -1,11 +1,14 @@
 package com.anandsurendran.webquizrestfulapi.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+
+
 @ToString @AllArgsConstructor
 public class QuizQuestion {
+    @Getter @Setter
+    private int id;
     @Getter @Setter
     private String title;
     @Getter @Setter
