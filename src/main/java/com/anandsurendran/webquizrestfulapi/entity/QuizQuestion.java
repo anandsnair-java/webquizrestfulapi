@@ -1,5 +1,6 @@
 package com.anandsurendran.webquizrestfulapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 @ToString @AllArgsConstructor
@@ -10,4 +11,6 @@ public class QuizQuestion {
     private String text;
     @Getter @Setter
     private String[] options;
+    @Getter @Setter @JsonIgnore
+    private int answer;
 }
