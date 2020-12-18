@@ -1,13 +1,15 @@
 package com.anandsurendran.webquizrestfulapi.api;
 
+import com.anandsurendran.webquizrestfulapi.entity.AnswerArray;
 import com.anandsurendran.webquizrestfulapi.entity.AnswerResponse;
 import com.anandsurendran.webquizrestfulapi.entity.QuizQuestion;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.UUID;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
@@ -35,21 +37,32 @@ public class QuizController {
 //        return defaultQuestion;
 //    }
 
-    @PostMapping(path = "/quiz")
-    public AnswerResponse answerQuiz(@RequestParam String answer) {
-        AnswerResponse response = new AnswerResponse();
-        if (answer.equals("2")) {
-            response.setSuccess(true);
-            response.setFeedback("Congratulations, you're right!");
-        } else {
-            response.setSuccess(false);
-            response.setFeedback("Wrong answer! Please, try again.");
-        }
-        return response;
-    }
+//    @PostMapping(path = "/quiz")
+//    public AnswerResponse answerQuiz(@RequestParam String answer) {
+//        AnswerResponse response = new AnswerResponse();
+//        if (answer.equals("2")) {
+//            response.setSuccess(true);
+//            response.setFeedback("Congratulations, you're right!");
+//        } else {
+//            response.setSuccess(false);
+//            response.setFeedback("Wrong answer! Please, try again.");
+//        }
+//        return response;
+//    }
+
+//    @PostMapping(path = "/quizzes")
+//    public QuizQuestion addQuestion(@RequestBody QuizQuestion inputQuestion) {
+//        QuizQuestion inputQuestionWithID = new QuizQuestion(id.getAndIncrement(),
+//                inputQuestion.getTitle(),
+//                inputQuestion.getText(),
+//                inputQuestion.getOptions(),
+//                inputQuestion.getAnswer());
+//        quizQuestions.add(inputQuestionWithID);
+//        return quizQuestions.get(quizQuestions.size() - 1);
+//    }
 
     @PostMapping(path = "/quizzes")
-    public QuizQuestion addQuestion(@RequestBody QuizQuestion inputQuestion) {
+    public QuizQuestion addQuestion(@Valid @RequestBody QuizQuestion inputQuestion) {
         QuizQuestion inputQuestionWithID = new QuizQuestion(id.getAndIncrement(),
                 inputQuestion.getTitle(),
                 inputQuestion.getText(),
@@ -73,14 +86,37 @@ public class QuizController {
         return quizQuestions;
     }
 
+//    @PostMapping(path = "/quizzes/{id}/solve")
+//    public AnswerResponse answerAQuiz(@PathVariable int id, @RequestParam int answer) {
+//        if (id >= quizQuestions.size()) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE);
+//        }
+//        if (quizQuestions.get(id).getAnswer() == answer) {
+//            return RIGHT_ANSWER_RESPONSE;
+//        }
+//        return WRONG_ANSWER_RESPONSE;
+//    }
+
     @PostMapping(path = "/quizzes/{id}/solve")
-    public AnswerResponse answerAQuiz(@PathVariable int id, @RequestParam int answer) {
+    public AnswerResponse answerAQuiz(@PathVariable int id, @Valid @RequestBody AnswerArray answer) {
         if (id >= quizQuestions.size()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE);
         }
-        if (quizQuestions.get(id).getAnswer() == answer) {
+        int[] rightAnswers = quizQuestions.get(id).getAnswer();
+        int[] answerArray = answer.getAnswer();
+        if (rightAnswers.length == 0 && answerArray.length==0) {
             return RIGHT_ANSWER_RESPONSE;
+        }
+
+        if (rightAnswers.length>0 && answerArray.length>0) {
+            Arrays.sort(rightAnswers);
+            Arrays.sort(answerArray);
+            if (Arrays.equals(rightAnswers,answerArray)) {
+                return RIGHT_ANSWER_RESPONSE;
+            }
         }
         return WRONG_ANSWER_RESPONSE;
     }
+
+
 }
