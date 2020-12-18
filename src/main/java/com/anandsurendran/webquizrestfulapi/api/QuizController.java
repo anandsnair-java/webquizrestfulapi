@@ -1,16 +1,17 @@
 package com.anandsurendran.webquizrestfulapi.api;
 
+import com.anandsurendran.webquizrestfulapi.api.repo.QuizRepository;
 import com.anandsurendran.webquizrestfulapi.entity.AnswerArray;
 import com.anandsurendran.webquizrestfulapi.entity.AnswerResponse;
 import com.anandsurendran.webquizrestfulapi.entity.QuizQuestion;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -20,94 +21,38 @@ public class QuizController {
 
     private static final AnswerResponse RIGHT_ANSWER_RESPONSE = new AnswerResponse(true, "Congratulations, you're right!");
     private static final AnswerResponse WRONG_ANSWER_RESPONSE = new AnswerResponse(false, "Wrong answer! Please, try again.");
+    @Autowired
+    private final QuizRepository quizRepository;
 
-
-    ArrayList<QuizQuestion> quizQuestions = new ArrayList<>();
-    private static AtomicInteger id = new AtomicInteger();
-
-//    @GetMapping(path = "/quiz")
-//    public QuizQuestion getQuiz() {
-//        QuizQuestion defaultQuestion = new QuizQuestion(
-//                id.getAndIncrement(),
-//                "The Java Logo",
-//                "What is depicted on the Java logo?",
-//                new String[]{"Robot", "Tea leaf", "Cup of coffee", "Bug"},
-//                2
-//        );
-//        return defaultQuestion;
-//    }
-
-//    @PostMapping(path = "/quiz")
-//    public AnswerResponse answerQuiz(@RequestParam String answer) {
-//        AnswerResponse response = new AnswerResponse();
-//        if (answer.equals("2")) {
-//            response.setSuccess(true);
-//            response.setFeedback("Congratulations, you're right!");
-//        } else {
-//            response.setSuccess(false);
-//            response.setFeedback("Wrong answer! Please, try again.");
-//        }
-//        return response;
-//    }
-
-//    @PostMapping(path = "/quizzes")
-//    public QuizQuestion addQuestion(@RequestBody QuizQuestion inputQuestion) {
-//        QuizQuestion inputQuestionWithID = new QuizQuestion(id.getAndIncrement(),
-//                inputQuestion.getTitle(),
-//                inputQuestion.getText(),
-//                inputQuestion.getOptions(),
-//                inputQuestion.getAnswer());
-//        quizQuestions.add(inputQuestionWithID);
-//        return quizQuestions.get(quizQuestions.size() - 1);
-//    }
+    public QuizController(QuizRepository quizRepository) {
+        this.quizRepository = quizRepository;
+    }
 
     @PostMapping(path = "/quizzes")
     public QuizQuestion addQuestion(@Valid @RequestBody QuizQuestion inputQuestion) {
-        QuizQuestion inputQuestionWithID = new QuizQuestion(id.getAndIncrement(),
-                inputQuestion.getTitle(),
-                inputQuestion.getText(),
-                inputQuestion.getOptions(),
-                inputQuestion.getAnswer());
-        quizQuestions.add(inputQuestionWithID);
-        return quizQuestions.get(quizQuestions.size() - 1);
+        return quizRepository.save(inputQuestion);
     }
 
     @GetMapping(path = "/quizzes/{id}")
     public QuizQuestion getQuizByID(@PathVariable int id) {
-        if (id >= quizQuestions.size()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE);
-        }
-        QuizQuestion questionAtID = quizQuestions.get(id);
-        return questionAtID;
+        return quizRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,QUIZ_NOT_FOUND_MESSAGE));
     }
 
     @GetMapping(path = "/quizzes")
-    public ArrayList<QuizQuestion> getAllQuiz() {
-        return quizQuestions;
+    public List<QuizQuestion> getAllQuiz() {
+        return (List<QuizQuestion>) quizRepository.findAll();
     }
-
-//    @PostMapping(path = "/quizzes/{id}/solve")
-//    public AnswerResponse answerAQuiz(@PathVariable int id, @RequestParam int answer) {
-//        if (id >= quizQuestions.size()) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE);
-//        }
-//        if (quizQuestions.get(id).getAnswer() == answer) {
-//            return RIGHT_ANSWER_RESPONSE;
-//        }
-//        return WRONG_ANSWER_RESPONSE;
-//    }
 
     @PostMapping(path = "/quizzes/{id}/solve")
     public AnswerResponse answerAQuiz(@PathVariable int id, @Valid @RequestBody AnswerArray answer) {
-        if (id >= quizQuestions.size()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE);
-        }
-        int[] rightAnswers = quizQuestions.get(id).getAnswer();
+        QuizQuestion answeredQuestion = quizRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE));
+        int[] rightAnswers = answeredQuestion.getAnswer();
         int[] answerArray = answer.getAnswer();
         if (rightAnswers.length == 0 && answerArray.length==0) {
             return RIGHT_ANSWER_RESPONSE;
         }
-
         if (rightAnswers.length>0 && answerArray.length>0) {
             Arrays.sort(rightAnswers);
             Arrays.sort(answerArray);
@@ -117,6 +62,4 @@ public class QuizController {
         }
         return WRONG_ANSWER_RESPONSE;
     }
-
-
 }
