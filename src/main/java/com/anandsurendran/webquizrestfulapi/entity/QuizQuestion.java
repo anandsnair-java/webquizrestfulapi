@@ -5,7 +5,7 @@ import lombok.*;
 
 
 
-@ToString @AllArgsConstructor
+@ToString @AllArgsConstructor @NoArgsConstructor
 public class QuizQuestion {
     @Getter @Setter
     private int id;
