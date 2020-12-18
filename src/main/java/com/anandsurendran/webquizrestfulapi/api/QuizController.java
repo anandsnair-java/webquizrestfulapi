@@ -16,20 +16,24 @@ public class QuizController {
 
     private static final String QUIZ_NOT_FOUND_MESSAGE = "Requested question not found";
 
+    private static final AnswerResponse RIGHT_ANSWER_RESPONSE = new AnswerResponse(true, "Congratulations, you're right!");
+    private static final AnswerResponse WRONG_ANSWER_RESPONSE = new AnswerResponse(false, "Wrong answer! Please, try again.");
+
+
     ArrayList<QuizQuestion> quizQuestions = new ArrayList<>();
     private static AtomicInteger id = new AtomicInteger();
 
-    @GetMapping(path = "/quiz")
-    public QuizQuestion getQuiz() {
-        QuizQuestion defaultQuestion = new QuizQuestion(
-                id.getAndIncrement(),
-                "The Java Logo",
-                "What is depicted on the Java logo?",
-                new String[]{"Robot", "Tea leaf", "Cup of coffee", "Bug"},
-                2
-        );
-        return defaultQuestion;
-    }
+//    @GetMapping(path = "/quiz")
+//    public QuizQuestion getQuiz() {
+//        QuizQuestion defaultQuestion = new QuizQuestion(
+//                id.getAndIncrement(),
+//                "The Java Logo",
+//                "What is depicted on the Java logo?",
+//                new String[]{"Robot", "Tea leaf", "Cup of coffee", "Bug"},
+//                2
+//        );
+//        return defaultQuestion;
+//    }
 
     @PostMapping(path = "/quiz")
     public AnswerResponse answerQuiz(@RequestParam String answer) {
@@ -52,12 +56,12 @@ public class QuizController {
                 inputQuestion.getOptions(),
                 inputQuestion.getAnswer());
         quizQuestions.add(inputQuestionWithID);
-        return quizQuestions.get(quizQuestions.size()-1);
+        return quizQuestions.get(quizQuestions.size() - 1);
     }
 
     @GetMapping(path = "/quizzes/{id}")
     public QuizQuestion getQuizByID(@PathVariable int id) {
-        if (id>=quizQuestions.size()) {
+        if (id >= quizQuestions.size()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE);
         }
         QuizQuestion questionAtID = quizQuestions.get(id);
@@ -67,5 +71,16 @@ public class QuizController {
     @GetMapping(path = "/quizzes")
     public ArrayList<QuizQuestion> getAllQuiz() {
         return quizQuestions;
+    }
+
+    @PostMapping(path = "/quizzes/{id}/solve")
+    public AnswerResponse answerAQuiz(@PathVariable int id, @RequestParam int answer) {
+        if (id >= quizQuestions.size()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE);
+        }
+        if (quizQuestions.get(id).getAnswer() == answer) {
+            return RIGHT_ANSWER_RESPONSE;
+        }
+        return WRONG_ANSWER_RESPONSE;
     }
 }
