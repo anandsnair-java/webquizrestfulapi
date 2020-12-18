@@ -2,7 +2,9 @@ package com.anandsurendran.webquizrestfulapi.api;
 
 import com.anandsurendran.webquizrestfulapi.entity.AnswerResponse;
 import com.anandsurendran.webquizrestfulapi.entity.QuizQuestion;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -11,6 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RestController
 @RequestMapping("/api")
 public class QuizController {
+
+    private static final String QUIZ_NOT_FOUND_MESSAGE = "Requested question not found";
 
     ArrayList<QuizQuestion> quizQuestions = new ArrayList<>();
     private static AtomicInteger id = new AtomicInteger();
@@ -49,5 +53,19 @@ public class QuizController {
                 inputQuestion.getAnswer());
         quizQuestions.add(inputQuestionWithID);
         return quizQuestions.get(quizQuestions.size()-1);
+    }
+
+    @GetMapping(path = "/quizzes/{id}")
+    public QuizQuestion getQuizByID(@PathVariable int id) {
+        if (id>=quizQuestions.size()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE);
+        }
+        QuizQuestion questionAtID = quizQuestions.get(id);
+        return questionAtID;
+    }
+
+    @GetMapping(path = "/quizzes")
+    public ArrayList<QuizQuestion> getAllQuiz() {
+        return quizQuestions;
     }
 }
