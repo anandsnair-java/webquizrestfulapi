@@ -7,7 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-@ToString @NoArgsConstructor @Entity
+@ToString @NoArgsConstructor @Entity @EqualsAndHashCode
 public class QuizQuestion {
     @Getter @Setter @Id @GeneratedValue
     private Integer id;
