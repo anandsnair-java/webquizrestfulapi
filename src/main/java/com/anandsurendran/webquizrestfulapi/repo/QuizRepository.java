@@ -1,4 +1,4 @@
-package com.anandsurendran.webquizrestfulapi.api.repo;
+package com.anandsurendran.webquizrestfulapi.repo;
 
 import com.anandsurendran.webquizrestfulapi.entity.QuizQuestion;
 import org.springframework.data.repository.CrudRepository;
