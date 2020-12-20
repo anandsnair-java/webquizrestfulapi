@@ -1,6 +1,9 @@
 package com.anandsurendran.webquizrestfulapi.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor @NoArgsConstructor
 public class AnswerResponse {
