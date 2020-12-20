@@ -1,6 +1,6 @@
 package com.anandsurendran.webquizrestfulapi.api;
 
-import com.anandsurendran.webquizrestfulapi.api.repo.QuizRepository;
+import com.anandsurendran.webquizrestfulapi.repo.QuizRepository;
 import com.anandsurendran.webquizrestfulapi.entity.AnswerArray;
 import com.anandsurendran.webquizrestfulapi.entity.AnswerResponse;
 import com.anandsurendran.webquizrestfulapi.entity.QuizQuestion;
@@ -13,13 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
-
 
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api")
