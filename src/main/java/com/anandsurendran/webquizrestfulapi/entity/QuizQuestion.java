@@ -10,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @ToString @NoArgsConstructor @Entity @EqualsAndHashCode
-public class QuizQuestion {
+public class QuizQuestion { //TODO Add validation messages
     @Getter @Setter @Id @GeneratedValue
     private Integer id;
     @Getter @Setter @NotEmpty

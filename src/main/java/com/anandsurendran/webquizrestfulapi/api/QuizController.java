@@ -24,7 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api")
-public class QuizController {
+public class QuizController { //TODO Add api to get list of questions
 
     private static final String QUIZ_NOT_FOUND_MESSAGE = "Requested question not found";
 
