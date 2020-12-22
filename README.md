@@ -14,13 +14,14 @@ Developed using Spring Boot
 
 Uses Maven for dependency management and build process
 
-###HATEOAS
+### HATEOAS
 
 Uses HATEOAS for true RESTful API implementation as opposed to just another RPC (Remote Procedure Call)
 
 ### Secure
 
 JSON Web Tokens (JWT) for security
+
 ### Hibernate
 
 Uses Hibernate for persistance
@@ -29,7 +30,7 @@ Uses Hibernate for persistance
 
 Uses an H2 database in file-storage mode
 
-###Lombok
+### Lombok
 
 Uses Lombok for brevity and ease of reading
 
