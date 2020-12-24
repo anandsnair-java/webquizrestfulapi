@@ -18,6 +18,10 @@ Uses Maven for dependency management and build process
 
 Uses HATEOAS for true RESTful API implementation as opposed to just another RPC (Remote Procedure Call)
 
+### Uses JSON
+
+Accepts JSON for request payload, and in responses
+
 ### Secure
 
 JSON Web Tokens (JWT) for security
