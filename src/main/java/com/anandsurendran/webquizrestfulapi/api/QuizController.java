@@ -6,6 +6,7 @@ import com.anandsurendran.webquizrestfulapi.entity.QuizQuestion;
 import com.anandsurendran.webquizrestfulapi.repo.QuizRepository;
 import com.anandsurendran.webquizrestfulapi.service.QuizModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -59,6 +60,7 @@ public class QuizController { //TODO Add api to get list of questions, count, de
 //    }
 
     @GetMapping(path = "/quizzes/{id}")
+    @Cacheable("quizzes")
     public EntityModel<QuizQuestion> getQuizByID(@PathVariable int id) {
         QuizQuestion foundQuiz = quizRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND_MESSAGE));
@@ -71,6 +73,7 @@ public class QuizController { //TODO Add api to get list of questions, count, de
 //    }
 
     @GetMapping(path = "/quizzes")
+    @Cacheable("quizzes")
     public CollectionModel<EntityModel<QuizQuestion>> getAllQuiz() {
 
         List<QuizQuestion> quizQuestions = (List<QuizQuestion>) quizRepository.findAll();
